@@ -8,7 +8,8 @@ import:
     - https://s3.amazonaws.com/xyz-demo/data/demo.yaml
     - https://www.nextzen.org/carto/refill-style/11/themes/label-4.zip
 
-
+global:
+    contour: [.3,.3,.0,.1]
 
 sources:
     _xyzspace:
@@ -33,7 +34,7 @@ sources:
             # tags: wof:parent_id@102191575
             # tags: dk+region #,se,no,fi
             # tags: fr+country,gb+country,de+country
-            tags: coastline
+            tags: coast,islands
             # tags: us.tx,us.ok,us.ne,us.ks,us.sd,us.nd,us.or,us.id,us.wy,us.ms
             # simplify: true
             # limit: 50000 # 
@@ -59,7 +60,7 @@ sources:
             # tags: wof:parent_id@102191575
             # tags: dk+region #,se,no,fi
             # tags: fr+country,gb+country,de+country
-            tags: ocean
+            tags: ocean_coast
             # tags: us.tx,us.ok,us.ne,us.ks,us.sd,us.nd,us.or,us.id,us.wy,us.ms
             # simplify: true
             # limit: 50000 # 
@@ -92,7 +93,8 @@ sources:
             # limit: 50000 # 
             clip: true
     _landuse:
-        url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
+        url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/quadkey/1222
+        # url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
         type: GeoJSON
         url_params: 
             access_token: AYCAaHYYWntibAK4RqKHBBE
@@ -105,12 +107,12 @@ sources:
             # limit: 50000 # 
             clip: true
     _middle_earth:
-        # url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
-        url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/quadkey/1222
+        url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
+        # url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/quadkey/1222
         type: GeoJSON
         url_params: 
             access_token: AYCAaHYYWntibAK4RqKHBBE
-            tags: middle_earth
+            tags: islands
             clip: true
     _places:
         url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
@@ -119,7 +121,13 @@ sources:
             access_token: AYCAaHYYWntibAK4RqKHBBE
             tags: combined_placenames
             clip: true
-        
+    _contours:
+        url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
+        type: GeoJSON
+        url_params: 
+            access_token: AYCAaHYYWntibAK4RqKHBBE
+            tags: contours
+            clip: true
         
 
 styles:
@@ -164,6 +172,24 @@ layers:
     earth: 
         enabled: false
     
+    _contours:
+        data: { source: _contours }
+        bathymetry:
+            # enabled: false
+            filter: {Elevation: {max: 5486}}
+            draw:
+                _lines:
+                    color: [0,0,1,0.1]
+                    order: 200
+                    width: .4px
+        elevation:
+            filter: {Elevation: {min: 5486}}
+            draw:
+                _lines:
+                    color: [[3,[.3,.3,.0,.1]],[15,[.3,.3,.0,.3]]]
+                    order: 100
+                    width: .5px
+        
     _coastline:
         data: { source: _coastline }
         water-boundary-ocean:
@@ -181,12 +207,14 @@ layers:
     
     
     _middle_earth:
+        # enabled: false
         data: { source: _middle_earth }
         draw:
             polygons:
                 color: white
                 order: 100
-    _water:
+    _ocean:
+        # enabled: false
         data: { source: _ocean }
         draw:
             polygons:
@@ -197,27 +225,62 @@ layers:
                 color: global.lighter_color
     _rivers:
         data: {source: _rivers}
+        _rivers:
+            filter: {GM_LAYER: 'River, Unknown Length'}
+            draw:
+                riverlines:
+                    # color: red
+                    width: [[11, 3px], [14, 6px], [ 18, 10px]]
+                    order: 1002
         draw:
             riverlines:
                 # style: riverlines
                 order: 1001
                 color:  black
                 # color: global.extralight_color
-                width: [[11, 1.5px], [14, 3px], [ 18, 8px]]
+                width: [[11, 1px], [14, 3px], [ 18, 6px]]
                 cap: round
+        label:
+            filter: {not: {NAME: River}}
+            draw:
+                text:
+                    priority: 100
+                    text_source: NAME
+                    # visible: false
+                    buffer: 128px
+                    font:
+                        family: global.text_font_family
+                        fill: blue
 
                 
     _roads:
         data: { source: _primary_roads }
         draw:
             lines:
-                order: 1002
-                color: grey
-                # color: [[5, global.light_color], [7, global.mid_color]]
-                width: [[5, .25px], [7, .5px]]
-                # outline:
-                #     width: [[8, 0.0px], [9, 0.0px], [11, .5px], [16, .75px]]
-
+                order: 2002
+                color: [[4, lightgrey],[8, grey], [11, white]] #, [13, white]]
+                width: [[8, 1px], [13, 3px], [14, 34px], [15, 4px], [17, 8px], [18, 10m]]
+                outline:
+                    color: [[8, white], [11, black]] #, [13, black]]
+                    width: [[8, 0px], [11, 1px], [14, 2px], [15, 3px], [19, 6px]]
+        # draw:
+        #     lines:
+        #         order: 1002
+        #         color: grey
+        #         # color: [[5, global.light_color], [7, global.mid_color]]
+        #         width: [[5, .25px], [7, .5px]]
+        #         # outline:
+        #         #     width: [[8, 0.0px], [9, 0.0px], [11, .5px], [16, .75px]]
+        label:
+            filter: {not: {NAME: null}}
+            draw:
+                text:
+                    text_source: NAME
+                    # visible: false
+                    buffer: 3px
+                    font:
+                        family: global.text_font_family
+                        fill: blue
 
     _forests:
         # enabled: false
@@ -312,8 +375,8 @@ layers:
                         buffer: 3px
                         font:
                             size: [[5,12px],[8,14px],[10,16px],[12,18px],[13,0px]]
-                            stroke: { color: black, width: 3px }
-                            fill: white
+                            stroke: { color: white, width: 3px }
+                            fill: black
         _towns:
             # enabled: false
             filter:
@@ -322,7 +385,7 @@ layers:
                 mapzen_icon_library:
                     visible: global.icon_visible_populated_places
                     size: [[4,5px],[8,6px],[9,0px]]
-                    sprite: townspot-m-rev
+                    sprite: townspot-l-rev
                     buffer: 8px
                     priority: 20
                     text:
@@ -331,8 +394,8 @@ layers:
                         buffer: 3px
                         font:
                             size: [[5,10px],[8,12px],[10,14px],[12,16px],[13,0px]]
-                            stroke: { color: black, width: 3px }
-                            fill: white
+                            stroke: { color: white, width: 3px }
+                            fill: black
         _villages:
             filter:
                 LAYER: VillageNames
@@ -340,14 +403,14 @@ layers:
             draw:
                 mapzen_icon_library:
                     size: [[8,8px],[9,10px],[10,12px],[12,0px]]
-                    sprite: townspot-s-rev
+                    sprite: townspot-m-rev
                     priority: 100
                     text:
                         text_source: NAME
                         font:
                             size: [[5,6px],[8,8px],[10,10px],[12,12px],[13,0px]]
-                            stroke: { color: black, width: 3px }
-                            fill: white
+                            stroke: { color: white, width: 3px }
+                            fill: black
 
         _islands:
             filter:
@@ -409,6 +472,7 @@ layers:
                     visible: global.icon_visible_populated_places
                     size: 14px
                     sprite: water
+                    color: lightcyan
                     # buffer: 8px
                     priority: 30
                     text:
@@ -418,6 +482,7 @@ layers:
                         font:
                             size: [[5,9px],[8,10px],[12,11px]]
                             stroke: { color: white, width: 4px }
+                            fill: grey
         _manor:
             filter:
                 LAYER: ManorHouseNames
@@ -529,6 +594,7 @@ layers:
                 mapzen_icon_library:
                     visible: global.icon_visible_populated_places
                     size: 14px
+                    color: lightcyan
                     sprite: egress
                     # buffer: 8px
                     priority: 30
@@ -539,7 +605,7 @@ layers:
                         font:
                             size: [[5,9px],[8,10px],[12,11px]]
                             stroke: { color: white, width: 4px }
-                                
+                            fill: grey
         _mountains:
             filter: 
                 LAYER: MountainNames
@@ -558,6 +624,43 @@ layers:
                             size: [[5,9px],[8,10px],[12,11px]]
                             stroke: { color: white, width: 4px }
                             # fill: global.text_fill
+        _volcanoes:
+            filter: 
+                LAYER: VulcanismNames
+            _doom:
+                filter: 
+                    NAME: Gwathiraug
+                draw:
+                    mapzen_icon_library:
+                        # visible: global.icon_visible_populated_places
+                        size: 18px
+                        sprite: volcano
+                        # color: red
+                        # buffer: 8px
+                        priority: 20
+                        text:
+                            text_source: NAME
+                            visible: global.text_visible_populated_places
+                            buffer: 3px
+                            font:
+                                size: [[5,9px],[8,10px],[12,11px]]
+                                stroke: { color: white, width: 4px }
+            draw:
+                mapzen_icon_library:
+                    # visible: global.icon_visible_populated_places
+                    size: 18px
+                    sprite: volcano
+                    color: pink
+                    # buffer: 8px
+                    priority: 1
+                    text:
+                        text_source: NAME
+                        visible: global.text_visible_populated_places
+                        buffer: 3px
+                        font:
+                            size: [[5,9px],[8,10px],[12,11px]]
+                            stroke: { color: white, width: 4px }
+                            # fill: global.text_fill
         _hills:
             filter: 
                 LAYER: HillsNames
@@ -566,6 +669,7 @@ layers:
                     visible: global.icon_visible_populated_places
                     size: 12px
                     sprite: mountain
+                    # color: 
                     # buffer: 8px
                     priority: 30
                     text:
@@ -575,6 +679,7 @@ layers:
                         font:
                             size: [[5,9px],[8,10px],[12,11px]]
                             stroke: { color: white, width: 4px }
+                            fill: '#aaa'
         _wetlands:
             filter:
                 LAYER: WetlandNames
@@ -602,7 +707,7 @@ layers:
             draw:
                 text:
                     # transform: capitalize
-                    # priority: 14
+                    priority: 10
                     # visible: false
                     text_source: NAME
                     font:
