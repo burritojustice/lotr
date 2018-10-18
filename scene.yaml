@@ -174,12 +174,14 @@ layers:
     
     _contours:
         data: { source: _contours }
+        filter: {GM_LAYER: Bathymetric Contour, Supplementary}
+
         bathymetry:
-            # enabled: false
+            enabled: false
             filter: {Elevation: {max: 5486}}
             draw:
                 _lines:
-                    color: [0,0,1,0.1]
+                    color: [0,0,1,0.05]
                     order: 200
                     width: .4px
         elevation:
@@ -192,17 +194,25 @@ layers:
         
     _coastline:
         data: { source: _coastline }
-        water-boundary-ocean:
-            enabled: global.sdk_coastline
-            # filter: { boundary: true, kind: ocean, $zoom: { min: 1 } }
+        _water-boundary-ocean:
+            # enabled: global.sdk_coastline
+            filter: { $zoom: { min: 7 } }
             draw:
                 lines:
                     style: coast
                     visible: true
                     order: 20
                     color: [[1, global.light_color], [6, global.mid_color]]
-                    width: [[1, 1px], [20, 10px]]
+                    width: [[1, 1px], [20, 5px]]
                     join: round
+        _island:
+            # enabled: false
+            filter: {LAYER: Island}
+            draw:
+                lines:
+                    style: coast
+                    width: [[1, 1px], [20, 2px]]
+
 
     
     
@@ -296,7 +306,7 @@ layers:
             draw:
                 polygons:
                     style: medium-dots
-                    color: lightgreen
+                    color: palegreen
                     # color: lightgrey
                     # width: 1px
                     order: 2000
@@ -326,6 +336,7 @@ layers:
                     
                     
     _lakes:
+        # enabled: false
         data: { source: _lakes}
         # draw:
         #     polygons:
