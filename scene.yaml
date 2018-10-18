@@ -465,7 +465,7 @@ layers:
                 mapzen_icon_library:
                     visible: global.icon_visible_populated_places
                     size: 14px
-                    sprite: embassy
+                    sprite: tower #embassy
                     # buffer: 8px
                     priority: 30
                     text:
