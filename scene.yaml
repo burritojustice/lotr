@@ -396,9 +396,9 @@ layers:
                 mapzen_icon_library:
                     visible: global.icon_visible_populated_places
                     size: [[4,5px],[8,6px],[9,0px]]
-                    sprite: townspot-l-rev
+                    sprite: townspot-xl-rev
                     buffer: 8px
-                    priority: 20
+                    priority: 15
                     text:
                         text_source: NAME
                         visible: global.text_visible_populated_places
@@ -413,13 +413,13 @@ layers:
 
             draw:
                 mapzen_icon_library:
-                    size: [[8,8px],[9,10px],[10,12px],[12,0px]]
-                    sprite: townspot-m-rev
+                    size: [[4,5px],[8,6px],[9,8px],[11,0px]]
+                    sprite: townspot-s-rev
                     priority: 100
                     text:
                         text_source: NAME
                         font:
-                            size: [[5,6px],[8,8px],[10,10px],[12,12px],[13,0px]]
+                            size: [[5,7px],[8,9px],[10,11px],[12,12px],[13,0px]]
                             stroke: { color: white, width: 3px }
                             fill: black
 
@@ -464,8 +464,9 @@ layers:
             draw:
                 mapzen_icon_library:
                     visible: global.icon_visible_populated_places
-                    size: 14px
-                    sprite: tower #embassy
+                    size: 18px
+                    # sprite: embassy
+                    sprite: tower
                     # buffer: 8px
                     priority: 30
                     text:
