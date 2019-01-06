@@ -25,6 +25,7 @@ sources:
             # simplify: true
             # limit: 50000 # 
             clip: true
+            max_zoom: 12
 
     _coastline:
         url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
