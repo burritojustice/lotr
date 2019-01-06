@@ -55,6 +55,7 @@ sources:
     _ocean:
         url: https://xyz.api.here.com/hub/spaces/q3f6AlWM/tile/web/{z}_{x}_{y}
         type: GeoJSON
+        max_zoom: 10
         url_params: 
             access_token: AYCAaHYYWntibAK4RqKHBBE
             # tags: wof:parent_id@102191575
