@@ -3,7 +3,7 @@
 
 http://tangrams.github.io/tangram-frame/?url=https://raw.githubusercontent.com/burritojustice/lotr/master/scene.yaml#6.10833/10.446/6.363
 
-(while I fix links)
+(while I fix nextzen.js links)
 
 ~https://burritojustice.github.io/lotr~
 
